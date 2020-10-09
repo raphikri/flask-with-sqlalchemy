@@ -1,5 +1,8 @@
 from flask import Flask, request, abort, render_template
 from config import Config
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+
 app = Flask(__name__)
 app.config.from_object(Config)
 
@@ -12,6 +15,9 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 from models import Product
 from schemas import many_product_schema, one_product_schema
+
+admin = Admin(app, template_mode='bootstrap3')
+admin.add_view(ModelView(Product, db.session))
 
 @app.route('/')
 def home():
