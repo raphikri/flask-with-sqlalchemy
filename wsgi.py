@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, abort, render_template
 from config import Config
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -12,6 +12,17 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 from models import Product
 from schemas import many_product_schema, one_product_schema
+
+@app.route('/')
+def home():
+    products = db.session.query(Product).all()
+
+    return render_template('home.html', products=products)
+
+@app.route('/<int:product_id>')
+def product_html(product_id):
+    product = db.session.query(Product).get(product_id)
+    return render_template('product.html', product=product)
 
 @app.route('/hello', methods=['GET'])
 def hello():
